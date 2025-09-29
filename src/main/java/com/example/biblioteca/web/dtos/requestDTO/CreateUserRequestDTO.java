@@ -13,13 +13,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequestDTO {
+public class CreateUserRequestDTO {
     
-    private Integer id;
+    private Integer userId;
 
     private String username;
 
     private String password;
+
+    private Character status;
 
     private String email;
 
