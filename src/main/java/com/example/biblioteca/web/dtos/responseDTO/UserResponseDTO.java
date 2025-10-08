@@ -29,5 +29,5 @@ public class UserResponseDTO {
 
     private String email;
 
-    private Set<RolEntity> rol;
+    private Set<RolEntity> roles;
 }

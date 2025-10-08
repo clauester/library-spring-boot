@@ -7,24 +7,32 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import static org.springframework.security.config.Customizer.withDefaults;
+import com.example.biblioteca.configuration.filters.JwtAuthenticationFilter;
+import com.example.biblioteca.configuration.jwt.JwtUtils;
+import com.example.biblioteca.service.UserDetailService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @Autowired
+    UserDetailService userDetailService;
+
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
+
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
+        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
+
         httpSecurity
                 .csrf(config -> config.disable())
                 .authorizeHttpRequests((authorize) -> {
@@ -34,21 +42,21 @@ public class SecurityConfig {
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                .httpBasic(withDefaults());          
+                .addFilter(jwtAuthenticationFilter);       
                 
         return httpSecurity.build();     
     }
 
-    @Bean
-    UserDetailsService userDetailsService(){
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(org.springframework.security.core.userdetails.User
-            .withUsername("miguel")
-            .password("1234")
-            .roles()
-            .build());
-        return manager;
-    }
+    // @Bean
+    // UserDetailsService userDetailsService(){
+    //     InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+    //     manager.createUser(org.springframework.security.core.userdetails.User
+    //         .withUsername("miguel")
+    //         .password("1234")
+    //         .roles()
+    //         .build());
+    //     return manager;
+    // }
 
     @Bean
     PasswordEncoder passwordEncoder(){
@@ -58,7 +66,7 @@ public class SecurityConfig {
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder) throws Exception{
             return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService())
+                .userDetailsService(userDetailService)
                 .passwordEncoder(passwordEncoder).and().build();
         }
 

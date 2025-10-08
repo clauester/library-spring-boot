@@ -33,11 +33,13 @@ public class UserController {
     
     
     private final UserService userService;
-    private final SessionRegistry sessionRegistry;
+    //private final SessionRegistry sessionRegistry;
 
-    private UserController(UserService userService, SessionRegistry sessionRegistry){
+    private UserController(UserService userService
+    //, SessionRegistry sessionRegistry
+    ){
         this.userService = userService;
-        this.sessionRegistry = sessionRegistry;
+        //this.sessionRegistry = sessionRegistry;
     }
 
     @GetMapping
@@ -51,32 +53,32 @@ public class UserController {
     }
     
 
-    @GetMapping("/session")
-    public ResponseEntity<?> getDetailsSession() {
-        String sessionId = "";
-        User userObject = null;
+    // @GetMapping("/session")
+    // public ResponseEntity<?> getDetailsSession() {
+    //     String sessionId = "";
+    //     User userObject = null;
 
-        List<Object> sessions = sessionRegistry.getAllPrincipals();
+    //     List<Object> sessions = sessionRegistry.getAllPrincipals();
 
-        for (Object session : sessions) {
-            if(session instanceof User){
-                userObject = (User) session;
-            }
+    //     for (Object session : sessions) {
+    //         if(session instanceof User){
+    //             userObject = (User) session;
+    //         }
 
-            List<SessionInformation> userSessions = sessionRegistry.getAllSessions(session, false);
+    //         List<SessionInformation> userSessions = sessionRegistry.getAllSessions(session, false);
 
-            for(SessionInformation sessionInformation: userSessions){
-                sessionId = sessionInformation.getSessionId();
-            }
-        }
+    //         for(SessionInformation sessionInformation: userSessions){
+    //             sessionId = sessionInformation.getSessionId();
+    //         }
+    //     }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("response", "hellow world");
-        response.put("sessionId", sessionId);
-        response.put("sessionUser", userObject);
+    //     Map<String, Object> response = new HashMap<>();
+    //     response.put("response", "hellow world");
+    //     response.put("sessionId", sessionId);
+    //     response.put("sessionUser", userObject);
 
-        return  ResponseEntity.ok(response);
-    }
+    //     return  ResponseEntity.ok(response);
+    // }
 
 
 }

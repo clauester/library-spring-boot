@@ -13,6 +13,9 @@ import com.example.biblioteca.web.dtos.responseDTO.UserResponseDTO;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+    // @Mappings({
+    //     @Mapping(source = "roles", target = "rol")
+    // })
     UserResponseDTO toDto(UserEntity user);
     List<CreateUserRequestDTO> toDtos(List<UserEntity> users);
     UserEntity toEntity(CreateUserRequestDTO dto);
